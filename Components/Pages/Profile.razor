@@ -1,0 +1,78 @@
+﻿@page "/profile"
+@rendermode InteractiveServer
+
+@attribute [Authorize]
+
+<h3>Profile </h3>
+
+<button @onclick="GetClaimsPrincipalData">Get Claims Principal</button>
+
+<p>@authMessage</p>
+
+@if (claims.Any())
+{
+    <ul>
+        @foreach (var claim in claims)
+        {
+            <li>@claim.Type: @claim.Value</li>
+        }
+    </ul>
+}
+
+<p>@surname</p>
+<button @onclick="LogoutClicked">Logout</button>
+
+
+
+@code{
+    private IEnumerable<Claim> claims = Enumerable.Empty<Claim>();
+    private string surname;
+    private string authMessage;
+    private AuthenticationState _authenticationState;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            _authenticationState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+            var user = _authenticationState.User;
+            if(user.Identity != null && user.Identity.IsAuthenticated)
+            {
+                claims = user.Claims;
+                surname = surname = user.FindFirst(c => c.Type == ClaimTypes.Email)!.Value;
+                authMessage = $"{user.Identity.Name} is authenticated";
+            }
+            else
+            {
+                authMessage = "The user is not auth";
+            }
+        }
+    }
+
+    private async Task GetClaimsPrincipalData()
+    {
+        _authenticationState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = _authenticationState.User;
+
+        if (user.Identity is not null && user.Identity.IsAuthenticated)
+        {
+            authMessage = $"{user.Identity.Name} is authenticated";
+            claims = user.Claims;
+            surname = user.FindFirst(c => c.Type == ClaimTypes.Email)!.Value;
+        }
+        else
+        {
+            authMessage = "The user is not auth";
+        }
+
+        StateHasChanged();
+    }
+
+    async Task LogoutClicked()
+    {
+        var customAuthStateProvider = (CustomAuthenticationStateProvider)AuthenticationStateProvider;
+        customAuthStateProvider.SetLogoutState();
+        NavigationManager.NavigateTo("login");
+    }
+}
+

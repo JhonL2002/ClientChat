@@ -1,5 +1,7 @@
 using ClientChat.Components;
 using ClientChat.Responses;
+using ClientChat.Services;
+using Microsoft.AspNetCore.Components.Authorization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -8,6 +10,9 @@ builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
 builder.Services.AddScoped<LoginService>();
+builder.Services.AddScoped<ManageTokenService>();
+builder.Services.AddScoped<AuthenticationStateProvider ,CustomAuthenticationStateProvider>();
+builder.Services.AddAuthorization();
 
 //HTTP client factory
 builder.Services.AddHttpClient("BackendChat", httpClient =>
@@ -31,6 +36,7 @@ app.UseStaticFiles();
 app.UseAntiforgery();
 
 app.MapRazorComponents<App>()
-    .AddInteractiveServerRenderMode();
+    .AddInteractiveServerRenderMode()
+    .AllowAnonymous();
 
 app.Run();

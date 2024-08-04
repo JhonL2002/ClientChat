@@ -1,7 +1,8 @@
 ﻿using ClientChat.DTOs;
-using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.AspNetCore.Mvc;
+using ClientChat.Services;
 using Microsoft.JSInterop;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 using System.Text;
 using System.Text.Json;
 
@@ -10,18 +11,17 @@ namespace ClientChat.Responses
     public class LoginService
     {
         private readonly IHttpClientFactory _httpClientFactory;
-        private readonly IJSRuntime _js;
+        private readonly ManageTokenService _tokenService;
         private readonly ILogger<LoginService> _logger;
 
-        public LoginService(IHttpClientFactory httpClientFactory, IJSRuntime js, ILogger<LoginService> logger)
+        public LoginService(IHttpClientFactory httpClientFactory, ManageTokenService tokenService, ILogger<LoginService> logger)
         {
             _httpClientFactory = httpClientFactory;
-            _js = js;
+            _tokenService = tokenService;
             _logger = logger;
-
         }
 
-        public async Task<bool> OnLoginAsync(LoginDTO model)
+        public async Task<LoginResponse> OnLoginAsync(LoginDTO model)
         {
             //Serialize the information to be processed
             var jsonContent = new StringContent(JsonSerializer.Serialize(model),
@@ -32,21 +32,39 @@ namespace ClientChat.Responses
             //Create the HTTP client using the BackendChat named factory
             var httpClient = _httpClientFactory.CreateClient("BackendChat");
 
-            //Execute a POST request and store the response.
-            using HttpResponseMessage response = await httpClient.PostAsync("login", jsonContent);
-            if (response.IsSuccessStatusCode)
+            try
             {
-                var result = await response.Content.ReadFromJsonAsync<LoginResponse>();
-                if (result != null)
+                //Execute a POST request and store the response.
+                using HttpResponseMessage response = await httpClient.PostAsync("login", jsonContent);
+                if (response.IsSuccessStatusCode)
                 {
-                    await _js.InvokeVoidAsync("sessionStorageHelper.setItem", "jwtToken", result.Token);
-                    //Delete log for production scenarios
-                    _logger.LogWarning($"**** Token {result.Token} ****");
-                    return true;
+                    var result = await response.Content.ReadFromJsonAsync<LoginResponse>();
+                    if (result != null)
+                    {
+                        var token = result.Token;
+                        //Save the token in ManageTokenService
+                        await _tokenService.SetToken(token);
+
+                        //Delete log for production scenarios
+                        _logger.LogInformation($"**** Token {token} ****");
+                        httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+                        return result;
+                    }
+                    else
+                    {
+                        _logger.LogWarning("Received null result from login response");
+                    }
+                }
+                else
+                {
+                    _logger.LogError($"Failded to login. Status code: {response.StatusCode}");
                 }
             }
-            _logger.LogError("**** Error to get token ****");
-            return false;
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Exception ocurred while trying to login");
+            }
+            return null!;
         }
     }
 }
