@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.AspNetCore.Components.Forms;
+using System.ComponentModel.DataAnnotations;
 
 namespace ClientChat.DTOs
 {
@@ -31,6 +32,9 @@ namespace ClientChat.DTOs
         [Required]
         [DataType(DataType.Password)]
         public string Password { get; set; } = string.Empty;
+
+        public IBrowserFile? ProfilePicture { get; set; }
+        public string? ProfilePictureUrl { get; set; }
 
         [Required]
         [Compare(nameof(Password)), DataType(DataType.Password)]

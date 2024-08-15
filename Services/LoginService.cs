@@ -1,12 +1,12 @@
 ﻿using ClientChat.DTOs;
-using ClientChat.Services;
+using ClientChat.Responses;
 using Microsoft.JSInterop;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using System.Text.Json;
 
-namespace ClientChat.Responses
+namespace ClientChat.Services
 {
     public class LoginService
     {

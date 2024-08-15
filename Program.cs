@@ -1,5 +1,4 @@
 using ClientChat.Components;
-using ClientChat.Responses;
 using ClientChat.Services;
 using Microsoft.AspNetCore.Components.Authorization;
 
@@ -10,6 +9,7 @@ builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
 builder.Services.AddScoped<LoginService>();
+builder.Services.AddScoped<RegistrationService>();
 builder.Services.AddScoped<ManageTokenService>();
 builder.Services.AddScoped<AuthenticationStateProvider ,CustomAuthenticationStateProvider>();
 builder.Services.AddAuthorization();
