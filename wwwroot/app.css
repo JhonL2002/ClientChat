@@ -49,3 +49,9 @@ h1:focus {
 .darker-border-checkbox.form-check-input {
     border-color: #929292;
 }
+
+.square-image{
+    width: 200px;
+    height: 200px;
+    object-fit: cover;
+}
