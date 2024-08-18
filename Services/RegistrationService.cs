@@ -2,8 +2,6 @@
 using ClientChat.Responses;
 using System.Text.Json;
 using System.Text;
-using Microsoft.AspNetCore.Components;
-using Microsoft.JSInterop;
 
 namespace ClientChat.Services
 {
@@ -11,15 +9,11 @@ namespace ClientChat.Services
     {
         private readonly IHttpClientFactory _httpClientFactory;
         private readonly ILogger<LoginService> _logger;
-        private readonly NavigationManager _navigationManager;
-        private readonly IJSRuntime _jSRuntime;
 
-        public RegistrationService(IHttpClientFactory httpClientFactory, ILogger<LoginService> logger, NavigationManager navigationManager, IJSRuntime jSRuntime)
+        public RegistrationService(IHttpClientFactory httpClientFactory, ILogger<LoginService> logger)
         {
             _httpClientFactory = httpClientFactory;
             _logger = logger;
-            _navigationManager = navigationManager;
-            _jSRuntime = jSRuntime;
         }
 
         public async Task OnRegisterAsync(RegisterDTO model)
@@ -59,8 +53,6 @@ namespace ClientChat.Services
                         var profilePictureUrl = result.ProfilePictureUrl;
                     }
                     _logger.LogInformation("User registered succesfully!");
-                    _navigationManager.NavigateTo("/login");
-                    await _jSRuntime.InvokeVoidAsync("alert", "User registered succesfully!");
                 }
                 else
                 {
