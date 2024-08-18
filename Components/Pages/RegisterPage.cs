@@ -11,6 +11,7 @@ namespace ClientChat.Components.Pages
         private async Task RegisterClicked()
         {
             await registrationService.OnRegisterAsync(Register);
+
         }
 
         private void HandleSelected(InputFileChangeEventArgs e)
