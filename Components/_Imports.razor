@@ -11,6 +11,7 @@
 @using System.IdentityModel.Tokens.Jwt;
 @using ClientChat.DTOs
 @using ClientChat.Services
+@using ClientChat.Services.Chat
 @using ClientChat.Responses
 @using Microsoft.JSInterop
 @using ClientChat
@@ -18,7 +19,10 @@
 
 @inject LoginService loginService
 @inject RegistrationService registrationService
+@inject ChatService chatService
+@inject ChatHubService chatHubService
 @inject AuthenticationStateProvider AuthenticationStateProvider
 @inject ManageTokenService tokenService
 @inject NavigationManager NavigationManager
 @inject IJSRuntime js
+@inject IHttpClientFactory _httpClientFactory

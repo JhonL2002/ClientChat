@@ -22,8 +22,8 @@ namespace ClientChat.DTOs
 
         [Required]
         [DataType(DataType.DateTime)]
-        [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
-        public DateTime DOB { get; set; }
+        [DisplayFormat(DataFormatString = "{0yyyy-MM-dd}", ApplyFormatInEditMode = true)]
+        public DateTime? DOB { get; set; }
 
         [Required]
         [DataType(DataType.EmailAddress)]
