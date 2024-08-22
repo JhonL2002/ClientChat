@@ -52,7 +52,7 @@ namespace ClientChat.Services
                     }
                     else
                     {
-                        _logger.LogWarning("Received null result from login response");
+                        _logger.LogError("Received null result from login response");
                     }
                 }
                 else

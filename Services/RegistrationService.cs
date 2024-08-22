@@ -16,14 +16,14 @@ namespace ClientChat.Services
             _logger = logger;
         }
 
-        public async Task OnRegisterAsync(RegisterDTO model)
+        public async Task<SuccessResponse> OnRegisterAsync(RegisterDTO model)
         {
             //Pass the data to API
             using var content = new MultipartFormDataContent
             {
                 { new StringContent(model.FirstName), "FirstName" },
                 { new StringContent(model.LastName), "LastName" },
-                { new StringContent(model.DOB.ToString("yyyy-MM-dd")), "DOB" },
+                { new StringContent(model.DOB.ToString()!), "DOB" },
                 { new StringContent(model.Nickname), "Nickname" },
                 { new StringContent(model.Email), "Email" },
                 { new StringContent(model.Password), "Password" },
@@ -58,12 +58,15 @@ namespace ClientChat.Services
                 {
                     var errorContent = await response.Content.ReadAsStringAsync();
                     _logger.LogError($"Failded to register user. Status code: {response.StatusCode}, Error: {errorContent}");
+                    return new SuccessResponse { IsSuccess =  false };
                 }
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Exception ocurred while trying to register user");
             }
+
+            return new SuccessResponse { IsSuccess =  true };
         }
     }
 
