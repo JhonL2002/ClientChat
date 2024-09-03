@@ -1,4 +1,4 @@
-﻿@page "/chat"
+﻿@page "/chatmedia"
 
 <h3>ChatPage</h3>
 
@@ -6,7 +6,7 @@
     @foreach (var message in chatHubService.Messages)
     {
         <li>
-            @message.User: @message.Text
+            @message.UserId: @message.Text
             @if (!string.IsNullOrEmpty(message.MediaUrl))
             {
                 <img src="@message.MediaUrl" alt="Image" style="max-width: 100px;" />
@@ -15,7 +15,7 @@
     }
 </ul>
 
-<div class="input-field col s12">
+<!----<div class="input-field col s12">
     <InputText @bind-Value="ChatMedia.User" id="user" type="text"></InputText>
     <label for="user">User</label>
 </div>
@@ -28,4 +28,4 @@
 </div>
 <div class="input-field col s12">
     <button @onclick="ClicButton">Send</button>
-</div>
+</div>--->

@@ -1,0 +1,24 @@
+﻿@page "/user-chats"
+
+@attribute [Authorize]
+
+<h3>User Chatst</h3>
+
+@if (userChat.Chats == null)
+{
+    <p>Loading chats...</p>
+}
+else if (!userChat.Chats.Any())
+{
+    <p>No chats available.</p>
+}
+else
+{
+    <ul>
+        @foreach (var chat in userChat.Chats)
+        {
+            <button @onclick="() => SelectChat(chat.ChatId)">@chat.ChatName Type: @chat.ChatTypeId</button>
+
+        }
+    </ul>
+}

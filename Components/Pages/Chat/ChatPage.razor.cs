@@ -8,7 +8,7 @@ namespace ClientChat.Components.Pages.Chat
 {
     public partial class ChatPage : ComponentBase
     {
-        public ChatMedia ChatMedia = new();
+        /*public ChatMessageDto ChatMedia = new();
 
         protected override async Task OnInitializedAsync()
         {
@@ -55,6 +55,6 @@ namespace ClientChat.Components.Pages.Chat
         public void Dispose()
         {
             chatHubService.OnMessagesUpdated -= UpdateUI;
-        }
+        }*/
     }
 }

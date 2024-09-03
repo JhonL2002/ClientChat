@@ -1,7 +1,14 @@
 ﻿using ClientChat.DTOs;
+using ClientChat.DTOs.Chats;
 using ClientChat.Responses;
 using Microsoft.AspNetCore.Components.Forms;
 using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Reflection;
+using System.Text.Json;
+using System.Text;
+using System;
+using Microsoft.AspNetCore.Mvc;
 
 namespace ClientChat.Services.Chat
 {
@@ -9,19 +16,26 @@ namespace ClientChat.Services.Chat
     {
         private readonly IHttpClientFactory _httpClientFactory;
         private readonly ILogger<ChatService> _logger;
+        private readonly ManageTokenService _manageTokenService;
 
-        public ChatService(IHttpClientFactory httpClientFactory, ILogger<ChatService> logger)
+        public ChatService(IHttpClientFactory httpClientFactory, ILogger<ChatService> logger, ManageTokenService manageTokenService)
         {
             _httpClientFactory = httpClientFactory;
             _logger = logger;
+            _manageTokenService = manageTokenService;
         }
 
-        public async Task<ChatMediaResponse> SendMediaAsync(ChatMedia model)
+        [BindProperty]
+        public IEnumerable<ChatMediaResponse> Messages { get; set; }
+
+        public async Task<MessageResponse> SendMediaAsync(ChatMessageDTO model)
         {
             //Pass the data to API
             using var content = new MultipartFormDataContent
             {
-                { new StringContent(model.User), "User" },
+                { new StringContent(model.UserId.ToString()), "UserId" },
+                { new StringContent(model.ChatId.ToString()), "ChatId" },
+                { new StringContent(model.Text ?? ""), "Text" },
             };
 
             if (model.File != null)
@@ -37,13 +51,18 @@ namespace ClientChat.Services.Chat
 
             try
             {
+                var token = _manageTokenService.GetToken();
+                httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", await token);
+
                 //Execute a POST request and store the response.
-                using HttpResponseMessage response = await httpClient.PostAsync("sendmedia", content);
+                using HttpResponseMessage response = await httpClient.PostAsync("send-message", content);
                 if (response.IsSuccessStatusCode)
                 {
-                    var result = await response.Content.ReadFromJsonAsync<ChatMediaResponse>();
+                    var result = await response.Content.ReadFromJsonAsync<MessageResponse>();
                     if (result != null)
                     {
+                        Console.ForegroundColor = ConsoleColor.Blue;
+                        Console.WriteLine("Message sent succesfully!");
                         return result;
                     }
                 }
@@ -60,6 +79,84 @@ namespace ClientChat.Services.Chat
 
             return null!;
 
+        }
+
+        public async Task GetMessagesAsync(int chatId, int? lastMessageId, int pageSize = 6)
+        {
+            //Create the HTTP client using the BackendChat named factory
+            var httpClient = _httpClientFactory.CreateClient("ChatClient");
+
+            //Create a new Url with necesary params
+            var url = $"{chatId}/messages";
+            var queryParams = new List<string>();
+            if (lastMessageId.HasValue)
+            {
+                queryParams.Add($"lastMessageId={lastMessageId.Value}");
+            }
+            queryParams.Add($"pageSize={pageSize}");
+
+            if (queryParams.Count > 0)
+            {
+                url += "?" + string.Join("&", queryParams);
+            }
+
+            try
+            {
+                var token = _manageTokenService.GetToken();
+                httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", await token);
+
+                //Perform the GET request and store the response
+                using HttpResponseMessage response = await httpClient.GetAsync(url);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    using var contentStream = await response.Content.ReadAsStreamAsync();
+                    Messages = await JsonSerializer.DeserializeAsync<IEnumerable<ChatMediaResponse>>(contentStream);
+                    _logger.LogInformation($"Content fetched successfully! {JsonSerializer.Serialize(Messages)}");
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Exception ocurred while fetching messages");
+            }
+        }
+
+
+        public async Task<bool> CreateGroupAsync(GroupDTO model)
+        {
+
+            //Serialize the information to be processed
+            var jsonContent = new StringContent(JsonSerializer.Serialize(model),
+                Encoding.UTF8,
+                "application/json"
+            );
+
+            //Create the HTTP client using the BackendChat named factory
+            var httpClient = _httpClientFactory.CreateClient("ChatClient");
+
+            try
+            {
+                var token = _manageTokenService.GetToken();
+                httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", await token);
+                //Execute a POST request and store the response.
+                using HttpResponseMessage response = await httpClient.PostAsync("create-group", jsonContent);
+                if (response.IsSuccessStatusCode)
+                {
+                    _logger.LogInformation("Group created successfully");
+                    return true;
+                }
+                else
+                {
+                    var errorContent = await response.Content.ReadAsStringAsync();
+                    _logger.LogError($"Failded to create group. Status code: {response.StatusCode}, Error: {errorContent}");
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Exception ocurred while trying to create group");
+            }
+
+            return false;
         }
     }
 }

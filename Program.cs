@@ -13,6 +13,7 @@ builder.Services.AddScoped<LoginService>();
 builder.Services.AddScoped<RegistrationService>();
 builder.Services.AddScoped<ChatService>();
 builder.Services.AddScoped<ChatHubService>();
+builder.Services.AddScoped<UserChat>();
 builder.Services.AddScoped<ManageTokenService>();
 builder.Services.AddScoped<AuthenticationStateProvider ,CustomAuthenticationStateProvider>();
 builder.Services.AddAuthorization();

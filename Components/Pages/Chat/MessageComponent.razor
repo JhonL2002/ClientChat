@@ -1,0 +1,74 @@
+﻿@page "/chat/{chatId:int}"
+
+@attribute [Authorize]
+
+<h3>Chat</h3>
+
+@if (chatMessages == null)
+{
+    <p>Loading messages...</p>
+}
+else
+{
+    <ul>
+        @foreach (var message in chatMessages)
+        {
+            if (message.MediaUrl != null)
+            {
+                <li>@message.UserName: </li>
+                <img src="@message.MediaUrl" width="100px" height="100px" />
+            }
+            if(message.Text != null)
+            {
+                <li>@message.UserName: @message.Text @message.Timestamp.ToString()</li>
+            }
+        }
+    </ul>
+    <ul>
+        @foreach (var message in chatHubService.Messages)
+        {
+            if (message.MediaUrl != null)
+            {
+                <li>@message.UserName: </li>
+                <img src="@message.MediaUrl" width="100px" height="100px" />
+            }
+            if (message.Text != null)
+            {
+                <li>@message.UserName: @message.Text</li>
+            }
+        }
+    </ul>
+
+    @if (isLoading)
+    {
+        <p>Loading more messages...</p>
+    }
+
+    <button @onclick="() => LoadMoreMessages()" disabled="@isLoading">Load Older Messages</button>
+
+    <div>
+        <textarea @bind="newMessage.Text"></textarea>
+        <div class="input-field col s12">
+            <InputFile OnChange="HandleSelected"></InputFile>
+        </div>
+        <button @onclick="SendMessageToGroup">Send</button>
+    </div>
+}
+
+<script>
+    async function handleImageError(imgElement) {
+        const blobName = extractBlobNameFromUrl(imgElement.src);
+
+        // Llamar a un método C# desde JavaScript para regenerar la URL SAS
+        const newUrl = await DotNet.invokeMethodAsync('ClientChat', 'RegenerateSasUrl', blobName);
+
+        if (newUrl) {
+            imgElement.src = newUrl;
+        }
+    }
+
+    function extractBlobNameFromUrl(url) {
+        const matches = /\/([^\/?#]+)[^\/]*$/.exec(url);
+        return matches && matches[1];
+    }
+</script>

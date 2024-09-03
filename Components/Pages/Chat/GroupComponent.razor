@@ -1,0 +1,15 @@
+﻿@page "/groupcomponent"
+@rendermode InteractiveServer
+
+@attribute [Authorize]
+
+<h3>GroupComponent</h3>
+
+<div class="input-field col s12">
+    <InputText @bind-Value="GroupDTO.GroupName" id="text"></InputText>
+    <label for="text">Group Name</label>
+</div>
+
+<div class="input-field col s12">
+    <button @onclick="CreateGroup">Send</button>
+</div>
