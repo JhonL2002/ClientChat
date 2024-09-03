@@ -5,6 +5,18 @@
 
 <h3>GroupComponent</h3>
 
+@if (manageGroupService.Groups == null)
+{
+    <p>Loading messages...</p>
+}
+else
+{
+    @foreach (var groups in manageGroupService.Groups)
+    {
+        <li>@groups.ChatName</li>
+    }
+}
+
 <div class="input-field col s12">
     <InputText @bind-Value="GroupDTO.GroupName" id="text"></InputText>
     <label for="text">Group Name</label>

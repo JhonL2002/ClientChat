@@ -120,43 +120,5 @@ namespace ClientChat.Services.Chat
                 _logger.LogError(ex, "Exception ocurred while fetching messages");
             }
         }
-
-
-        public async Task<bool> CreateGroupAsync(GroupDTO model)
-        {
-
-            //Serialize the information to be processed
-            var jsonContent = new StringContent(JsonSerializer.Serialize(model),
-                Encoding.UTF8,
-                "application/json"
-            );
-
-            //Create the HTTP client using the BackendChat named factory
-            var httpClient = _httpClientFactory.CreateClient("ChatClient");
-
-            try
-            {
-                var token = _manageTokenService.GetToken();
-                httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", await token);
-                //Execute a POST request and store the response.
-                using HttpResponseMessage response = await httpClient.PostAsync("create-group", jsonContent);
-                if (response.IsSuccessStatusCode)
-                {
-                    _logger.LogInformation("Group created successfully");
-                    return true;
-                }
-                else
-                {
-                    var errorContent = await response.Content.ReadAsStringAsync();
-                    _logger.LogError($"Failded to create group. Status code: {response.StatusCode}, Error: {errorContent}");
-                }
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Exception ocurred while trying to create group");
-            }
-
-            return false;
-        }
     }
 }

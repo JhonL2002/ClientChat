@@ -1,6 +1,7 @@
 using ClientChat.Components;
 using ClientChat.Services;
 using ClientChat.Services.Chat;
+using ClientChat.Services.Group;
 using Microsoft.AspNetCore.Components.Authorization;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -15,6 +16,7 @@ builder.Services.AddScoped<ChatService>();
 builder.Services.AddScoped<ChatHubService>();
 builder.Services.AddScoped<UserChat>();
 builder.Services.AddScoped<ManageTokenService>();
+builder.Services.AddScoped<ManageGroupService>();
 builder.Services.AddScoped<AuthenticationStateProvider ,CustomAuthenticationStateProvider>();
 builder.Services.AddAuthorization();
 

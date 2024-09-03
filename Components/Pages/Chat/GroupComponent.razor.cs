@@ -27,12 +27,21 @@ namespace ClientChat.Components.Pages.Chat
                     identifier = user.FindFirst(c => c.Type == ClaimTypes.NameIdentifier)!.Value;
                     GroupDTO.CreatorUserId = Convert.ToInt32(identifier);
                 }
+
                 StateHasChanged();
             }
+
+            await manageGroupService.GetAllGroupsAsync();
+            StateHasChanged();
         }
+
+        /*protected override async Task OnInitializedAsync()
+        {
+            await manageGroupService.GetAllGroupsAsync();
+        }*/
         private async Task CreateGroup()
         {
-            var isSuccess = await chatService.CreateGroupAsync(GroupDTO);
+            var isSuccess = await manageGroupService.CreateGroupAsync(GroupDTO);
             if (isSuccess == true)
             {
                 await js.InvokeVoidAsync("alert", "Group Created Successfully");

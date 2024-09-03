@@ -12,6 +12,7 @@
 @using ClientChat.DTOs
 @using ClientChat.Services
 @using ClientChat.Services.Chat
+@using ClientChat.Services.Group
 @using ClientChat.Responses
 @using Microsoft.JSInterop
 @using ClientChat
@@ -25,5 +26,6 @@
 @inject AuthenticationStateProvider AuthenticationStateProvider
 @inject ManageTokenService tokenService
 @inject NavigationManager NavigationManager
+@inject ManageGroupService manageGroupService
 @inject IJSRuntime js
 @inject IHttpClientFactory _httpClientFactory
