@@ -47,5 +47,35 @@ namespace ClientChat.Services.Chat
                 _logger.LogError(ex, "Exception ocurred while fetching chats");
             }
         }
+
+        public async Task JoinToGroupAsync(int chatId)
+        {
+            //Create the HTTP client using the BackendChat named factory
+            var httpClient = _httpClientFactory.CreateClient("ChatClient");
+
+            try
+            {
+                var token = _manageTokenService.GetToken();
+                httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", await token);
+
+                //Perform the POST request and store the response
+                using HttpResponseMessage response = await httpClient.PostAsync($"join-group?chatId={chatId}", null);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    Console.ForegroundColor = ConsoleColor.DarkBlue;
+                    Console.WriteLine("User joined to group successfully!");
+                }
+                else
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine($"Error to join group {response.ReasonPhrase}!");
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Exception ocurred while post request");
+            }
+        }
     }
 }

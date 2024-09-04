@@ -13,7 +13,7 @@ else
 {
     @foreach (var groups in manageGroupService.Groups)
     {
-        <li>@groups.ChatName</li>
+        <button @onclick="() => JoinToGroupButton(groups.ChatId)">@groups.ChatName</button>
     }
 }
 

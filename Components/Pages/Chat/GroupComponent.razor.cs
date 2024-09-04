@@ -34,11 +34,6 @@ namespace ClientChat.Components.Pages.Chat
             await manageGroupService.GetAllGroupsAsync();
             StateHasChanged();
         }
-
-        /*protected override async Task OnInitializedAsync()
-        {
-            await manageGroupService.GetAllGroupsAsync();
-        }*/
         private async Task CreateGroup()
         {
             var isSuccess = await manageGroupService.CreateGroupAsync(GroupDTO);
@@ -52,6 +47,11 @@ namespace ClientChat.Components.Pages.Chat
                 Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine("Error to create group!");
             }
+        }
+
+        private async Task JoinToGroupButton(int chatId)
+        {
+            await userChat.JoinToGroupAsync(chatId);
         }
     }
 }
