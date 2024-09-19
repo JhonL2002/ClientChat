@@ -120,5 +120,28 @@ namespace ClientChat.Services.Chat
                 _logger.LogError(ex, "Exception ocurred while fetching messages");
             }
         }
+
+        public string GetFileExtension(string mediaUrl)
+        {
+            var fileName = GetFileName(mediaUrl);
+
+            //Get the file extension
+            var fileExtension = Path.GetExtension(fileName).ToLower();
+            return fileExtension;
+        }
+
+        public string GetFileName(string mediaUrl)
+        {
+            //Create an URI object from URL
+            var uri = new Uri(mediaUrl);
+
+            //Extract the URL path
+            var path = uri.AbsolutePath;
+
+            //Get the file name from path
+            var filename = Path.GetFileName(path);
+
+            return filename;
+        }
     }
 }

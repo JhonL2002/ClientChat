@@ -35,7 +35,8 @@ namespace ClientChat.Services.Chat
                 {
                     UserName = userName,
                     Text = message,
-                    MediaUrl = mediaUrl
+                    MediaUrl = mediaUrl,
+                    Timestamp = DateTime.UtcNow
                 });
                 OnMessagesUpdated?.Invoke(userName, message, mediaUrl);
             });

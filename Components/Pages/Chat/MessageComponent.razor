@@ -4,37 +4,97 @@
 
 <h3>Chat</h3>
 
-@if (chatMessages == null)
+@if (isLoading && !chatMessages.Any())
 {
-    <p>Loading messages...</p>
+    <p id="loading">Loading...</p>
 }
 else
 {
-    <ul>
-        @foreach (var message in chatMessages)
-        {
-            if (message.MediaUrl != null)
+    if (chatMessages.Any())
+    {
+        <!----Loop messages from Database---->
+        <ul>
+            @foreach (var message in chatMessages)
             {
-                <li>@message.UserName: </li>
-                <img src="@message.MediaUrl" width="100px" height="100px" />
+                if (message.Text != null)
+                {
+                    <li>@message.UserName: @message.Text @message.Timestamp.ToLocalTime()</li>
+                }
+                if (message.MediaUrl!=null)
+                {
+                    var extension = chatService.GetFileExtension(message.MediaUrl);
+                    var fileName = chatService.GetFileName(message.MediaUrl);
+                    switch (extension)
+                    {
+                        case ".jpg":
+                        case ".jpeg":
+                        case ".png":
+                            if (message.Text == null)
+                            {
+                                <li>@message.UserName: @message.Timestamp.ToLocalTime()</li>
+                            }
+                            <img src="@message.MediaUrl" width="100px" height="100px" />
+                            break;
+                        case ".mp4":
+                            break;
+                        case ".mp3":
+                        case ".wav":
+                            break;
+                        case ".pdf":
+                        case ".docx":
+                        case ".xlsx":
+                        case ".zip":
+                            <a href="@message.MediaUrl" target="_blank">@fileName</a>
+                            break;
+                        default:
+                            break;
+                    }
+                }
             }
-            if(message.Text != null)
-            {
-                <li>@message.UserName: @message.Text @message.Timestamp.ToString()</li>
-            }
-        }
-    </ul>
+        </ul>
+    }
+    else
+    {
+        <p>No messages to show!</p>
+    }
+
+    <!----Loop messages from real time server---->
     <ul>
         @foreach (var message in chatHubService.Messages)
         {
-            if (message.MediaUrl != null)
-            {
-                <li>@message.UserName: </li>
-                <img src="@message.MediaUrl" width="100px" height="100px" />
-            }
             if (message.Text != null)
             {
-                <li>@message.UserName: @message.Text</li>
+                <li>@message.UserName: @message.Text @message.Timestamp.ToLocalTime()</li>
+            }
+            if (message.MediaUrl != null)
+            {
+                var extension = chatService.GetFileExtension(message.MediaUrl);
+                var fileName = chatService.GetFileName(message.MediaUrl);
+                switch (extension)
+                {
+                    case ".jpg":
+                    case ".jpeg":
+                    case ".png":
+                        if (message.Text == null)
+                        {
+                            <li>@message.UserName: @message.Timestamp.ToLocalTime()</li>
+                        }
+                        <img src="@message.MediaUrl" width="100px" height="100px" />
+                        break;
+                    case ".mp4":
+                        break;
+                    case ".mp3":
+                    case ".wav":
+                        break;
+                    case ".pdf":
+                    case ".docx":
+                    case ".xlsx":
+                    case ".zip":
+                        <a href="@message.MediaUrl" target="_blank">@fileName</a>
+                        break;
+                    default:
+                        break;
+                }
             }
         }
     </ul>
@@ -45,30 +105,17 @@ else
     }
 
     <button @onclick="() => LoadMoreMessages()" disabled="@isLoading">Load Older Messages</button>
-
-    <div>
-        <textarea @bind="newMessage.Text"></textarea>
-        <div class="input-field col s12">
-            <InputFile OnChange="HandleSelected"></InputFile>
-        </div>
-        <button @onclick="SendMessageToGroup">Send</button>
-    </div>
+    <br />
 }
-
-<script>
-    async function handleImageError(imgElement) {
-        const blobName = extractBlobNameFromUrl(imgElement.src);
-
-        // Llamar a un método C# desde JavaScript para regenerar la URL SAS
-        const newUrl = await DotNet.invokeMethodAsync('ClientChat', 'RegenerateSasUrl', blobName);
-
-        if (newUrl) {
-            imgElement.src = newUrl;
-        }
-    }
-
-    function extractBlobNameFromUrl(url) {
-        const matches = /\/([^\/?#]+)[^\/]*$/.exec(url);
-        return matches && matches[1];
-    }
-</script>
+<div>
+    <textarea @bind="newMessage.Text"></textarea>
+    <div class="file-field input-field">
+        <div class="btn">
+            <span>File</span>
+                <InputFile OnChange="HandleSelected" type="file"></InputFile>
+        </div>
+    </div>
+    <button @onclick="SendMessageToGroup">
+        Send
+    </button>
+</div>

@@ -23,6 +23,6 @@ namespace ClientChat.Responses
         public string? MediaUrl { get; set; }
 
         [JsonPropertyName("timestamp")]
-        public DateTime? Timestamp { get; set; }
+        public DateTime Timestamp { get; set; }
     }
 }

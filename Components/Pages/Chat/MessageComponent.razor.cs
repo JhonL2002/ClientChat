@@ -13,9 +13,10 @@ namespace ClientChat.Components.Pages.Chat
         [Parameter] public int ChatId { get; set; }
         private ChatMessageDTO newMessage = new ChatMessageDTO();
         private List<ChatMediaResponse> chatMessages = new List<ChatMediaResponse>();
-        public string mediaUrl;
+        private string? mediaUrl;
         private int? lastMessageId;
         private bool isLoading = false;
+        private bool hasRendered = false;
 
         protected override async Task OnInitializedAsync()
         {
@@ -29,39 +30,49 @@ namespace ClientChat.Components.Pages.Chat
                 });
             };
             await LoadMoreMessages(initialLoad: true);
+
         }
+
 
         private async Task LoadMoreMessages(bool initialLoad = false)
         {
             if (isLoading) return;
 
             isLoading = true;
-
-            if (initialLoad)
-            {
-                lastMessageId = null;
-            }
-
-            await chatService.GetMessagesAsync(ChatId, lastMessageId);
-            if (chatService.Messages.Any())
+            StateHasChanged();
+            try
             {
                 if (initialLoad)
                 {
-                    chatMessages = chatService.Messages.OrderBy(m => m.Timestamp).ToList();
+                    lastMessageId = null;
                 }
-                else
+
+                await chatService.GetMessagesAsync(ChatId, lastMessageId);
+                if (chatService.Messages.Any())
                 {
-                    var orderedMessages = chatService.Messages.OrderBy(m => m.Timestamp).ToList();
-                    chatMessages.InsertRange(0, orderedMessages);
+                    if (initialLoad)
+                    {
+                        chatMessages = chatService.Messages.OrderBy(m => m.Timestamp).ToList();
+                    }
+                    else
+                    {
+                        var orderedMessages = chatService.Messages.OrderBy(m => m.Timestamp).ToList();
+                        chatMessages.InsertRange(0, orderedMessages);
+                    }
+                    lastMessageId = chatService.Messages.Last().MessageId;
                 }
-                lastMessageId = chatService.Messages.Last().MessageId;
             }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+            finally
+            {
+                isLoading = false;
 
-            isLoading = false;
-
-            StateHasChanged();
+                StateHasChanged();
+            }
         }
-
         private void HandleSelected(InputFileChangeEventArgs e)
         {
             newMessage.File = e.File;
@@ -81,6 +92,11 @@ namespace ClientChat.Components.Pages.Chat
                 mediaUrl = response.MediaUrl;
             }
             await chatHubService.SendMessageToGroupAsync(ChatId, newMessage.UserName, newMessage.Text, mediaUrl);
+        }
+
+        private async Task<string> ConvertUtcToLocal(DateTime utcDate)
+        {
+            return await js.InvokeAsync<string>("convertUtcToLocal", utcDate.ToString("O"));
         }
 
         public async ValueTask DisposeAsync()
