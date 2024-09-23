@@ -7,12 +7,16 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="8.0.8" />
-    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.0.1" />
+    <None Remove="Components\Layout\HomeLayout.razor.css" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="wwwroot\js\" />
+    <Content Include="Components\Layout\HomeLayout.razor.css" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="8.0.8" />
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.0.1" />
   </ItemGroup>
 
 </Project>

@@ -1,0 +1,83 @@
+﻿::deep h1{
+    color: green;
+}
+
+header {
+    width: 100%;
+    height: 80px;
+    background-color: #212127;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 10px;
+}
+
+::deep .user-name {
+    font-weight: bold;
+    color: darkgreen;
+}
+
+::deep .timestamp {
+    color: gray;
+    margin-right: 5px;
+}
+
+::deep .message-input-container {
+    display: flex;
+    align-items: center;
+    margin: 10px 0;
+}
+
+::deep .message-textarea {
+    flex: 1;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    margin-right: 10px;
+    resize: none; /* Evita que el textarea se redimensione */
+    height: 50px; /* Altura fija */
+}
+
+::deep .file-field {
+    margin-right: 10px;
+}
+
+::deep .chat-file {
+    position: relative;
+}
+
+::deep .file-input {
+    display: none; /* Oculta el input de archivo, puedes mostrarlo con un botón personalizado */
+}
+
+::deep .send-button {
+    padding: 10px 15px;
+    background-color: #007bff; /* Cambia el color según tu tema */
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+::deep .send-button:hover {
+        background-color: #0056b3; /* Color al pasar el mouse */
+}
+
+::deep user-label{
+    display: flex;
+    align-items: center;
+    font-size: 14px;
+    margin-bottom: 5px;
+}
+
+::deep .message-list {
+    list-style: none;
+}
+
+
+@media(max-width:900px){
+    header {
+        padding: 0px 30px;
+    }
+}

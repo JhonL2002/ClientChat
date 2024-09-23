@@ -1,70 +1,57 @@
-﻿<div class="top-row ps-3 navbar navbar-dark">
-    <div class="container-fluid">
-        <a class="navbar-brand" href="">ClientChat</a>
-    </div>
+﻿<div class="chat-logo">Logo</div>
+<div class="bars" @onclick="ToggleNavBar">
+    <div class="line"></div>
+    <div class="line"></div>
+    <div class="line"></div>
+    <div class="line"></div>
 </div>
 
-<input type="checkbox" title="Navigation menu" class="navbar-toggler" />
-
-<div class="nav-scrollable" onclick="document.querySelector('.navbar-toggler').click()">
-    <nav class="flex-column">
+<nav class="navbar-layout">
+    <ul>
         <AuthorizeView>
             <Authorized>
-                <div class="nav-item px-3">
-                    <NavLink class="nav-link" href="counter">
-                        <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> Counter
-                    </NavLink>
-                </div>
-
-                <div class="nav-item px-3">
-                    <NavLink class="nav-link" href="profile">
-                        <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> Profile
-                    </NavLink>
-                </div>
-
-                <div class="nav-item px-3" href="logout">
-                    <NavLink class="nav-link" @onclick="Logout">
-                        <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> Logout
-                    </NavLink>
-                </div>
-                <div class="nav-item px-3">
-                    <NavLink class="nav-link" href="groupcomponent">
-                        <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> Groups
-                    </NavLink>
-                </div>
-                <div class="nav-item px-3">
-                    <NavLink class="nav-link" href="user-chats">
-                        <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> Chats
-                    </NavLink>
-                </div>
+                <li>
+                    <NavLink href="profile" @onclick="()=> CloseNav()">Profile</NavLink>
+                </li>
+                <li>
+                    <NavLink href="user-chats" @onclick="()=> CloseNav()">Chats</NavLink>
+                </li>
+                <li>
+                    <NavLink href="groupcomponent" @onclick="()=> CloseNav()">Groups</NavLink>
+                </li>
+                <li>
+                    <NavLink href="" @onclick="Logout">Logout</NavLink>
+                </li>
             </Authorized>
             <NotAuthorized>
-                <div class="nav-item px-3">
-                    <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-                        <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> Home
-                    </NavLink>
-                </div>
-                <div class="nav-item px-3">
-                    <NavLink class="nav-link" href="login">
-                        <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> Login
-                    </NavLink>
-                </div>
-
-                <div class="nav-item px-3">
-                    <NavLink class="nav-link" href="weather">
-                        <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Weather
-                    </NavLink>
-                </div>
+                <li>
+                    <NavLink href="/" @onclick="()=> CloseNav()">Home</NavLink>
+                </li>
+                <li>
+                    <NavLink href="login" @onclick="()=> CloseNav()">Login</NavLink>
+                </li>
+                <li>
+                    <NavLink href="register" @onclick="()=> CloseNav()">Register</NavLink>
+                </li>
             </NotAuthorized>
         </AuthorizeView>
-    </nav>
-</div>
-@code{
+    </ul>
+</nav>
+@code {
     private async Task Logout()
     {
         var customAuthStateProvider = (CustomAuthenticationStateProvider)AuthenticationStateProvider;
         await customAuthStateProvider.SetLogoutState();
         NavigationManager.NavigateTo("login", forceLoad: true);
     }
-}
 
+    private async Task ToggleNavBar()
+    {
+        await js.InvokeVoidAsync("navBarInterop.toggleNavbar");
+    }
+
+    private async Task CloseNav()
+    {
+        await js.InvokeVoidAsync("navBarInterop.closeNavbar");
+    }
+}

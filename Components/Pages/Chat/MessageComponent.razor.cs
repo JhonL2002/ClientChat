@@ -94,11 +94,6 @@ namespace ClientChat.Components.Pages.Chat
             await chatHubService.SendMessageToGroupAsync(ChatId, newMessage.UserName, newMessage.Text, mediaUrl);
         }
 
-        private async Task<string> ConvertUtcToLocal(DateTime utcDate)
-        {
-            return await js.InvokeAsync<string>("convertUtcToLocal", utcDate.ToString("O"));
-        }
-
         public async ValueTask DisposeAsync()
         {
             await chatHubService.DisposeAsync();

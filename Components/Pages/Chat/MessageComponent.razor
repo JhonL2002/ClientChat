@@ -2,25 +2,75 @@
 
 @attribute [Authorize]
 
-<h3>Chat</h3>
-
-@if (isLoading && !chatMessages.Any())
-{
-    <p id="loading">Loading...</p>
-}
-else
-{
-    if (chatMessages.Any())
+<div class="container">
+    <h1>User Chats</h1>
+    @if (isLoading && !chatMessages.Any())
     {
-        <!----Loop messages from Database---->
+        <p id="loading">Loading...</p>
+    }
+    else
+    {
+        if (chatMessages.Any())
+        {
+                <!----Loop messages from Database---->
+                <ul class="message-list">
+                    @foreach (var message in chatMessages)
+                    {
+                        <li>
+                            <div class="user-label">
+                                <span class="timestamp">[@message.Timestamp.ToLocalTime()]</span>
+                                <span class="user-name">@message.UserName:</span>
+                                <span class="message-text">@message.Text</span>
+                            </div>
+                            @if (message.MediaUrl!=null)
+                            {
+                                var extension = chatService.GetFileExtension(message.MediaUrl);
+                                var fileName = chatService.GetFileName(message.MediaUrl);
+                                switch (extension)
+                                {
+                                    case ".jpg":
+                                    case ".jpeg":
+                                    case ".png":
+                                        <div>
+                                            <img src="@message.MediaUrl" width="100px" height="100px" />
+                                        </div>
+                                        break;
+                                    case ".mp4":
+                                        break;
+                                    case ".mp3":
+                                    case ".wav":
+                                        break;
+                                    case ".pdf":
+                                    case ".docx":
+                                    case ".xlsx":
+                                    case ".zip":
+                                        <div>
+                                            <a href="@message.MediaUrl" target="_blank">@fileName</a>
+                                        </div>
+                                        break;
+                                    default:
+                                        break;
+                                }
+                            }
+                        </li>
+                    }
+                </ul>
+        }
+        else
+        {
+            <p>No messages to show!</p>
+        }
+    }
+
+        <!----Loop messages from real time server---->
         <ul>
-            @foreach (var message in chatMessages)
+            @foreach (var message in chatHubService.Messages)
             {
                 if (message.Text != null)
                 {
                     <li>@message.UserName: @message.Text @message.Timestamp.ToLocalTime()</li>
                 }
-                if (message.MediaUrl!=null)
+                if (message.MediaUrl != null)
                 {
                     var extension = chatService.GetFileExtension(message.MediaUrl);
                     var fileName = chatService.GetFileName(message.MediaUrl);
@@ -52,70 +102,22 @@ else
                 }
             }
         </ul>
-    }
-    else
-    {
-        <p>No messages to show!</p>
-    }
-
-    <!----Loop messages from real time server---->
-    <ul>
-        @foreach (var message in chatHubService.Messages)
+        @if (isLoading)
         {
-            if (message.Text != null)
-            {
-                <li>@message.UserName: @message.Text @message.Timestamp.ToLocalTime()</li>
-            }
-            if (message.MediaUrl != null)
-            {
-                var extension = chatService.GetFileExtension(message.MediaUrl);
-                var fileName = chatService.GetFileName(message.MediaUrl);
-                switch (extension)
-                {
-                    case ".jpg":
-                    case ".jpeg":
-                    case ".png":
-                        if (message.Text == null)
-                        {
-                            <li>@message.UserName: @message.Timestamp.ToLocalTime()</li>
-                        }
-                        <img src="@message.MediaUrl" width="100px" height="100px" />
-                        break;
-                    case ".mp4":
-                        break;
-                    case ".mp3":
-                    case ".wav":
-                        break;
-                    case ".pdf":
-                    case ".docx":
-                    case ".xlsx":
-                    case ".zip":
-                        <a href="@message.MediaUrl" target="_blank">@fileName</a>
-                        break;
-                    default:
-                        break;
-                }
-            }
+            <p>Loading more messages...</p>
         }
-    </ul>
 
-    @if (isLoading)
-    {
-        <p>Loading more messages...</p>
-    }
-
-    <button @onclick="() => LoadMoreMessages()" disabled="@isLoading">Load Older Messages</button>
-    <br />
-}
-<div>
-    <textarea @bind="newMessage.Text"></textarea>
-    <div class="file-field input-field">
-        <div class="btn">
-            <span>File</span>
-                <InputFile OnChange="HandleSelected" type="file"></InputFile>
+        <button @onclick="() => LoadMoreMessages()" disabled="@isLoading">Load Older Messages</button>
+        <br />
+        <div class="message-input-container">
+            <textarea @bind="newMessage.Text" class="message-textarea"></textarea>
+            <div class="file-field input-field">
+                <div class="chat-file">
+                    <InputFile OnChange="HandleSelected" type="file" class="file-input"></InputFile>
+                </div>
+            </div>
+            <button class="send-button" @onclick="SendMessageToGroup">
+                Send
+            </button>
         </div>
-    </div>
-    <button @onclick="SendMessageToGroup">
-        Send
-    </button>
 </div>

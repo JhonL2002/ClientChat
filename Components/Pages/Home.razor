@@ -1,4 +1,5 @@
 ﻿@page "/"
+@layout ClientChat.Components.Layout.HomeLayout
 
 <PageTitle>Home</PageTitle>
 
@@ -6,9 +7,11 @@
 
 Welcome to your new app.
 
-@code {
-    protected override async Task OnInitializedAsync()
+<button class="btest" @onclick="LoginCheck">Login</button>
+
+@code{
+    private void LoginCheck()
     {
-        NavigationManager.NavigateTo("/register");
+        NavigationManager.NavigateTo("/login");
     }
 }
