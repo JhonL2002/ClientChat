@@ -6,11 +6,13 @@
     <h1>User Chats</h1>
     @if (isLoading && !chatMessages.Any())
     {
-        <p id="loading">Loading...</p>
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
     }
     else
     {
-        if (chatMessages.Any())
+        @if (chatMessages.Any())
         {
                 <!----Loop messages from Database---->
                 <ul class="message-list">
@@ -22,97 +24,71 @@
                                 <span class="user-name">@message.UserName:</span>
                                 <span class="message-text">@message.Text</span>
                             </div>
-                            @if (message.MediaUrl!=null)
+                            @if (message.MediaUrl != null)
                             {
                                 var extension = chatService.GetFileExtension(message.MediaUrl);
-                                var fileName = chatService.GetFileName(message.MediaUrl);
-                                switch (extension)
+                                var renderer = MediaRendererFactory.GetFileRenderer<ChatMediaResponse>(extension);
+
+                                @if (renderer != null)
                                 {
-                                    case ".jpg":
-                                    case ".jpeg":
-                                    case ".png":
-                                        <div>
-                                            <img src="@message.MediaUrl" width="100px" height="100px" />
-                                        </div>
-                                        break;
-                                    case ".mp4":
-                                        break;
-                                    case ".mp3":
-                                    case ".wav":
-                                        break;
-                                    case ".pdf":
-                                    case ".docx":
-                                    case ".xlsx":
-                                    case ".zip":
-                                        <div>
-                                            <a href="@message.MediaUrl" target="_blank">@fileName</a>
-                                        </div>
-                                        break;
-                                    default:
-                                        break;
+                                    @renderer.RenderFile(message, () => OnResourceLoaded(message));
                                 }
-                            }
+                            } 
                         </li>
                     }
                 </ul>
         }
         else
         {
-            <p>No messages to show!</p>
+                <span>No messages to show!</span>
+        }
+
+        if (chatMessages.Any())
+        {
+            <button @onclick="() => LoadMoreMessages()" class="btn btn-primary" type="button" disabled="@isLoading">
+                @if (isLoading)
+                {
+                    <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+                    <span role="status">Loading...</span>
+
+                }
+                else
+                {
+                    <span>Load older messages</span>
+                }
+            </button>
         }
     }
 
         <!----Loop messages from real time server---->
-        <ul>
+        <ul class="message-list">
             @foreach (var message in chatHubService.Messages)
             {
-                if (message.Text != null)
-                {
-                    <li>@message.UserName: @message.Text @message.Timestamp.ToLocalTime()</li>
-                }
-                if (message.MediaUrl != null)
+            <li>
+                <div class="user-label">
+                    <span class="timestamp">[@message.Timestamp.ToLocalTime()]</span>
+                    <span class="user-name">@message.UserName:</span>
+                    <span class="message-text">@message.Text</span>
+                </div>
+                @if (message.MediaUrl != null)
                 {
                     var extension = chatService.GetFileExtension(message.MediaUrl);
-                    var fileName = chatService.GetFileName(message.MediaUrl);
-                    switch (extension)
+                    var renderer = MediaRendererFactory.GetFileRenderer<ChatMessageDTO>(extension);
+
+                    @if (renderer != null)
                     {
-                        case ".jpg":
-                        case ".jpeg":
-                        case ".png":
-                            if (message.Text == null)
-                            {
-                                <li>@message.UserName: @message.Timestamp.ToLocalTime()</li>
-                            }
-                            <img src="@message.MediaUrl" width="100px" height="100px" />
-                            break;
-                        case ".mp4":
-                            break;
-                        case ".mp3":
-                        case ".wav":
-                            break;
-                        case ".pdf":
-                        case ".docx":
-                        case ".xlsx":
-                        case ".zip":
-                            <a href="@message.MediaUrl" target="_blank">@fileName</a>
-                            break;
-                        default:
-                            break;
+                        @renderer.RenderFile(message, () => OnResourceLoaded(message));
+                       
                     }
                 }
-            }
-        </ul>
-        @if (isLoading)
-        {
-            <p>Loading more messages...</p>
+            </li>
         }
-
-        <button @onclick="() => LoadMoreMessages()" disabled="@isLoading">Load Older Messages</button>
+        </ul>
         <br />
-        <div class="message-input-container">
+        <div>
             <textarea @bind="newMessage.Text" class="message-textarea"></textarea>
-            <div class="file-field input-field">
-                <div class="chat-file">
+            <div>
+                <div>
                     <InputFile OnChange="HandleSelected" type="file" class="file-input"></InputFile>
                 </div>
             </div>

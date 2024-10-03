@@ -1,5 +1,6 @@
 ﻿using ClientChat.DTOs;
 using ClientChat.Responses;
+using ClientChat.Services.MediaRenderer;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.JSInterop;
@@ -11,6 +12,8 @@ namespace ClientChat.Components.Pages.Chat
     public partial class MessageComponent : ComponentBase, IAsyncDisposable
     {
         [Parameter] public int ChatId { get; set; }
+        //Implement MediaRender Factory
+        [Inject] MediaRendererFactory MediaRendererFactory { get; set; }
         private ChatMessageDTO newMessage = new ChatMessageDTO();
         private List<ChatMediaResponse> chatMessages = new List<ChatMediaResponse>();
         private string? mediaUrl;
@@ -31,6 +34,18 @@ namespace ClientChat.Components.Pages.Chat
             };
             await LoadMoreMessages(initialLoad: true);
 
+        }
+
+        public void OnResourceLoaded(ChatMediaResponse message)
+        {
+            message.IsImageLoaded = true;
+            StateHasChanged();
+        }
+
+        public void OnResourceLoaded(ChatMessageDTO message)
+        {
+            message.IsImageLoaded = true;
+            StateHasChanged();
         }
 
 

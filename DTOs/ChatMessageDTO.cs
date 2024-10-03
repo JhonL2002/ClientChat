@@ -1,8 +1,9 @@
-﻿using Microsoft.AspNetCore.Components.Forms;
+﻿using ClientChat.Bridges;
+using Microsoft.AspNetCore.Components.Forms;
 
 namespace ClientChat.DTOs
 {
-    public class ChatMessageDTO
+    public class ChatMessageDTO : IMediaFile
     {
         public int MessageId { get; set; }
         public int UserId { get; set; }
@@ -12,5 +13,7 @@ namespace ClientChat.DTOs
         public string? MediaUrl { get; set; }
         public DateTime Timestamp { get; set; }
         public IBrowserFile? File { get; set; }
+
+        public bool IsImageLoaded { get; set; } = false;
     }
 }

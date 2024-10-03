@@ -1,8 +1,9 @@
-﻿using System.Text.Json.Serialization;
+﻿using ClientChat.Bridges;
+using System.Text.Json.Serialization;
 
 namespace ClientChat.Responses
 {
-    public class ChatMediaResponse
+    public class ChatMediaResponse : IMediaFile
     {
         [JsonPropertyName("messageId")]
         public int MessageId { get; set; }
@@ -24,5 +25,7 @@ namespace ClientChat.Responses
 
         [JsonPropertyName("timestamp")]
         public DateTime Timestamp { get; set; }
+
+        public bool IsImageLoaded { get; set; } = false;
     }
 }
