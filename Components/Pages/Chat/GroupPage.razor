@@ -1,0 +1,40 @@
+﻿@page "/groupcomponent"
+@rendermode InteractiveServer
+
+@attribute [Authorize]
+
+
+<GroupComponent></GroupComponent>
+
+
+@if (manageGroupService.Groups == null)
+{
+    <p>Loading messages...</p>
+}
+else
+{
+    <h2>Available groups to join</h2>
+    <div class="cards-grid">
+        @foreach (var groups in manageGroupService.Groups)
+        {
+            <div class="card" style="width: 18rem;">
+                <img src="/favicon.png" class="card-img-top" alt="...">
+                <div class="card-body">
+                    <h5 class="card-title">@groups.ChatName</h5>
+                    <p class="card-text">@groups.ChatId</p>
+                    <button @onclick="() => JoinToGroupButton(groups.ChatId)">@groups.ChatName </button>
+                </div>
+            </div>
+        }
+    </div>
+    <div class="create-group">
+        <div class="input-field col s12">
+            <InputText @bind-Value="GroupDTO.GroupName" id="text" type="text"></InputText>
+            <label for="text">Group Name</label>
+        </div>
+
+        <div class="input-field col s12">
+            <button class="btn btn-primary" @onclick="CreateGroup">Send</button>
+        </div>
+    </div>
+}

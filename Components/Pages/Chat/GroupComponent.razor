@@ -1,27 +1,37 @@
-﻿@page "/groupcomponent"
-@rendermode InteractiveServer
+﻿@layout ClientChat.Components.Layout.HomeLayout
 
 @attribute [Authorize]
 
-<h3>GroupComponent</h3>
 
-@if (manageGroupService.Groups == null)
-{
-    <p>Loading messages...</p>
-}
-else
-{
-    @foreach (var groups in manageGroupService.Groups)
+    <h1>User Groups</h1>
+
+    @if (isloading)
     {
-        <button @onclick="() => JoinToGroupButton(groups.ChatId)">@groups.ChatName</button>
+        <div>
+            <button class="btn btn-primary" type="button" disabled>
+                <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+                <span class="visually-hidden" role="status">Loading...</span>
+            </button>
+        </div>
     }
-}
-
-<div class="input-field col s12">
-    <InputText @bind-Value="GroupDTO.GroupName" id="text" type="text"></InputText>
-    <label for="text">Group Name</label>
-</div>
-
-<div class="input-field col s12">
-    <button @onclick="CreateGroup">Send</button>
-</div>
+    else if (!userChat.Chats.Any() || userChat.Chats == null)
+    {
+        <p>No chats available.</p>
+    }
+    else
+    {
+        <div class="cards-grid">
+            @foreach (var chat in userChat.Chats)
+            {
+                <div class="card" style="width: 18rem;">
+                    <img src="/favicon.png" class="card-img-top" alt="...">
+                            <div class="card-body">
+                                <h5 class="card-title">@chat.ChatName</h5>
+                                <p class="card-text">@chat.ChatTypeId</p>
+                                <button @onclick="() => SelectChat(chat.ChatId)">Go somewhere</button>
+                            </div>
+                </div>
+            }
+        </div>
+   
+    }

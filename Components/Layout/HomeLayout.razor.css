@@ -1,5 +1,13 @@
 ﻿::deep h1{
     color: green;
+    text-align: center;
+}
+
+::deep h2 {
+    color: blue;
+    text-align: center;
+    padding-top: 10px;
+    padding-bottom: 10px;
 }
 
 header {
@@ -47,7 +55,7 @@ header {
 }
 
 ::deep .file-input {
-    display: none; /* Oculta el input de archivo, puedes mostrarlo con un botón personalizado */
+    display: block;
 }
 
 ::deep .send-button {
@@ -75,9 +83,61 @@ header {
     list-style: none;
 }
 
+::deep .cards-grid{
+    display: grid;
+    grid-template-columns: repeat(3, 0fr);
+    width: 100%;
+    align-content: center;
+    justify-content: center;
+    gap: 10px;
+}
 
-@media(max-width:900px){
+::deep .card {
+    position: inherit; /* Puedes cambiar 'inherit' por 'relative', 'absolute', etc. */
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    word-wrap: break-word;
+    /* Ajuste de colores */
+    background-color: #f8f9fa; /* Cambia el fondo a un tono más claro */
+    background-clip: border-box;
+    /* Bordes */
+    border: 2px solid rgba(0, 0, 0, 0.2); /* Un borde más grueso y menos opaco */
+    border-radius: 0.5rem; /* Aumenta el redondeo de las esquinas */
+    /* Opcional: Agregar sombra */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Una sombra suave */
+}
+
+    /* Ejemplo para cambiar solo las propiedades específicas */
+::deep .card:hover {
+    border-color: #007bff; /* Cambia el color del borde cuando se hace hover */
+    background-color: #e9ecef; /* Cambia el fondo al hacer hover */
+}
+
+::deep .create-group {
+    display: grid;
+    width: 100%;
+    align-content: center;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 30px;
+    margin-bottom: 30px;
+}
+
+@media(max-width:900px) {
     header {
         padding: 0px 30px;
     }
+
+    ::deep .cards-grid {
+        grid-template-columns: repeat(2, 1fr);
+        grid-template-rows: repeat(3, 1fr);
+    }
 }
+
+@media(max-width:600px) {
+    ::deep .cards-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
