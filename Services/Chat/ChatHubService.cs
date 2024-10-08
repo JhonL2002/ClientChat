@@ -71,7 +71,17 @@ namespace ClientChat.Services.Chat
         {
             if (_connection.State != HubConnectionState.Disconnected)
             {
-                await _connection.StopAsync();
+                try
+                {
+                    await _connection.StopAsync();
+                    Console.ForegroundColor = ConsoleColor.Yellow;
+                    Console.WriteLine("Connection stopped successfully!!!");
+                }
+                catch (Exception ex)
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine(ex.ToString());
+                }
             }
         }
     }

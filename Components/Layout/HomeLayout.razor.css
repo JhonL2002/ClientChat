@@ -20,6 +20,10 @@ header {
     padding: 0 10px;
 }
 
+::deep .custom-spinner{
+    border-color: chartreuse;
+}
+
 ::deep .user-name {
     font-weight: bold;
     color: darkgreen;
@@ -124,20 +128,33 @@ header {
     margin-bottom: 30px;
 }
 
+::deep .inter-message {
+    margin-top: 30px;
+    margin-bottom: 30px;
+    padding-top: 20px;
+    padding-bottom: 20px;
+}
+
+::deep .not-found {
+    color: blue;
+    text-align: center;
+}
+
 @media(max-width:900px) {
     header {
         padding: 0px 30px;
     }
 
     ::deep .cards-grid {
-        grid-template-columns: repeat(2, 1fr);
+        grid-template-columns: repeat(2, 0fr);
         grid-template-rows: repeat(3, 1fr);
     }
 }
 
 @media(max-width:600px) {
     ::deep .cards-grid {
-        grid-template-columns: 1fr;
+        grid-template-columns: 0fr;
     }
+
 }
 
