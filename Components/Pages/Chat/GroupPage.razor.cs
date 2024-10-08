@@ -15,24 +15,16 @@ namespace ClientChat.Components.Pages.Chat
         public GroupDTO GroupDTO = new();
 
         private string identifier;
+        private bool isLoading = true;
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
             if (firstRender)
             {
-                _authenticationState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-                var user = _authenticationState.User;
-                if (user.Identity is not null && user.Identity.IsAuthenticated)
-                {
-                    identifier = user.FindFirst(c => c.Type == ClaimTypes.NameIdentifier)!.Value;
-                    GroupDTO.CreatorUserId = Convert.ToInt32(identifier);
-                }
-
+                await manageGroupService.GetAllGroupsAsync();
+                isLoading = false;
                 StateHasChanged();
             }
-
-            await manageGroupService.GetAllGroupsAsync();
-            StateHasChanged();
         }
         private async Task CreateGroup()
         {

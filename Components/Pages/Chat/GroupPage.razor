@@ -7,9 +7,15 @@
 <GroupComponent></GroupComponent>
 
 
-@if (manageGroupService.Groups == null)
+@if (isLoading)
 {
-    <p>Loading messages...</p>
+    <p>Loading...</p>
+}
+else if (manageGroupService.Groups == null || !manageGroupService.Groups.Any())
+{
+    <div class="inter-message">
+        <p class="not-found">No groups available to join.</p>
+    </div>
 }
 else
 {
