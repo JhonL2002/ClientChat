@@ -4,18 +4,31 @@ using ClientChat.Services.Chat;
 using ClientChat.Services.Group;
 using ClientChat.Services.MediaRenderer;
 using Microsoft.AspNetCore.Components.Authorization;
+using System.Text.Json;
 
 var builder = WebApplication.CreateBuilder(args);
+
+//Configure JsonSerializerOptions
+var jsonSerializerOptions = new JsonSerializerOptions
+{
+    PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+    PropertyNameCaseInsensitive = true
+};
 
 // Add services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
+//Register JsonSerializerOptions as singleton
+builder.Services.AddSingleton(jsonSerializerOptions);
+
 builder.Services.AddScoped<LoginService>();
 builder.Services.AddScoped<RegistrationService>();
+builder.Services.AddScoped<UpdateService>();
 builder.Services.AddScoped<ChatService>();
 builder.Services.AddScoped<ChatHubService>();
 builder.Services.AddScoped<UserChat>();
+builder.Services.AddScoped<UserDataService>();
 builder.Services.AddScoped<ManageTokenService>();
 builder.Services.AddScoped<ManageGroupService>();
 builder.Services.AddScoped<MediaRendererFactory>();
