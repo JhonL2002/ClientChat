@@ -1,0 +1,60 @@
+﻿@page "/profile"
+@rendermode InteractiveServer 
+@layout Components.Layout.HomeLayout
+
+@attribute [Authorize]
+
+<h1>Welcome @userName</h1>
+
+<p>@authMessage</p>
+@if (isLoading)
+{
+    <p>Loading user data...</p>
+}
+else
+{
+    <form>
+        <EditForm Model="Update" OnValidSubmit="RegisterClicked">
+            <DataAnnotationsValidator />
+            <div class="form-group">
+                <label for="firstname">First Name</label>
+                <InputText @bind-Value="Update.FirstName" id="firstname" type="text" class="form-control" placeholder="First Name"></InputText>
+            </div>
+            <br />
+            <div class="form-group">
+                <label for="lastname">Last Name</label>
+                <InputText @bind-Value="Update.LastName" id="lastname" type="text" class="form-control" placeholder="Last Name"></InputText>
+            </div>
+            <br />
+            <div class="form-group">
+                <label for="nickname">NickName</label>
+                <InputText @bind-Value="Update.Nickname" id="nickname" type="text" class="form-control" placeholder="Nickname"></InputText>
+            </div>
+            <br />
+            <div class="form-group">
+                <label for="dob">Date of Birth</label>
+                <InputDate @bind-Value="Update.DOB" id="dob" class="form-control"></InputDate>
+            </div>
+            <br />
+            <div class="form-group">
+                <label for="profilepicture">Profile Photo</label>
+                <InputFile id="profilepicture" type="file" class="form-control" OnChange="HandleSelected"></InputFile>
+            </div>
+            <br />
+            <div class="form-group">
+                <label for="email">Email</label>
+                <InputText @bind-Value="Update.Email" id="email" type="email" class="form-control" placeholder="Email"></InputText>
+            </div>
+            <br />
+            <div class="form-group">
+                <button type="submit" class="btn btn-primary">Register</button>
+            </div>
+            <ValidationSummary />
+        </EditForm>
+    </form>
+}
+
+
+
+
+

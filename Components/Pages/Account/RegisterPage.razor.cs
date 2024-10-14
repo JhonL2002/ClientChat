@@ -17,6 +17,7 @@ namespace ClientChat.Components.Pages.Account
             if (response.IsSuccess)
             {
                 await js.InvokeVoidAsync("alert", "Success!");
+                Register = new RegisterDTO();
             }
             else
             {
