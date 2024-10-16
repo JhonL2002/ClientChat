@@ -33,14 +33,14 @@ else
             </div>
         }
     </div>
-    <div class="create-group">
-        <div class="input-field col s12">
-            <InputText @bind-Value="GroupDTO.GroupName" id="text" type="text"></InputText>
-            <label for="text">Group Name</label>
-        </div>
-
-        <div class="input-field col s12">
-            <button class="btn btn-primary" @onclick="CreateGroup">Send</button>
-        </div>
-    </div>
 }
+<div class="create-group">
+    <div class="input-field col s12">
+        <InputText @bind-Value="GroupDTO.GroupName" id="text" type="text"></InputText>
+        <label for="text">Group Name</label>
+    </div>
+
+    <div class="input-field col s12">
+        <button class="btn btn-primary" @onclick="CreateGroup">Send</button>
+    </div>
+</div>

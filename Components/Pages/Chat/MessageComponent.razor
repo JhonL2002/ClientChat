@@ -87,10 +87,9 @@
         <br />
         <div>
             <textarea @bind="newMessage.Text" class="message-textarea"></textarea>
-            <div>
-                <div>
-                    <InputFile OnChange="HandleSelected" type="file" class="file-input"></InputFile>
-                </div>
+            <div class="mb-3">
+                <label for="formFile" class="form-label">Default file input example</label>
+                <InputFile OnChange="HandleSelected" class="form-control" type="file" id="formFile"></InputFile>
             </div>
             <button class="send-button" @onclick="SendMessageToGroup">
                 Send

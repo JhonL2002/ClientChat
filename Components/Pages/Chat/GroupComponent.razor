@@ -14,7 +14,7 @@
             </button>
         </div>
     }
-    else if (!userChat.Chats.Any() || userChat.Chats == null)
+    else if (userChat == null || userChat.Chats == null || !userChat.Chats.Any())
     {
         <p>No chats available.</p>
     }
